@@ -1,0 +1,51 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer base {
+  body {
+    @apply bg-background text-on-surface;
+  }
+
+  .editorial-headline {
+    @apply font-headline;
+  }
+
+  h1 {
+    @apply text-2xl font-bold;
+  }
+
+  h2 {
+    @apply text-xl font-semibold;
+  }
+
+  button {
+    @apply transition-colors;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-primary text-on-primary rounded-md font-semibold hover:opacity-90 transition-opacity;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-secondary text-on-secondary rounded-md font-semibold hover:opacity-90 transition-opacity;
+  }
+
+  .btn-tertiary {
+    @apply px-6 py-3 bg-tertiary text-on-tertiary rounded-md font-semibold hover:opacity-90 transition-opacity;
+  }
+
+  .card {
+    @apply bg-surface-container-lowest p-6 rounded-md shadow-sm;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-md focus:outline-none focus:ring-2 focus:ring-primary;
+  }
+
+  .top-app-bar {
+    @apply fixed w-full top-0 z-50 bg-surface-container-low backdrop-blur-md flex justify-between items-center px-6 py-4;
+  }
+}
