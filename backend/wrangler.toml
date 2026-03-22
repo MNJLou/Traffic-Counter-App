@@ -19,3 +19,10 @@ database_id = "YOUR_DB_ID"
 
 [[triggers.crons]]
 cron = "*/15 * * * *"
+"d1_databases": [
+    {
+      "binding": "traffic_counter_db",
+      "database_name": "traffic-counter-db",
+      "database_id": "98630067-a7f0-4bd0-8d63-1155dc293af9"
+    }
+  ]
