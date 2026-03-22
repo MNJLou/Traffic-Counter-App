@@ -82,12 +82,15 @@ export class MainClicker {
   private async handleAutoSubmit() {
     console.log('Auto-submitting session data to database...')
     try {
-      await this.counterService.updateCount(this.selectedLocation, {
-        in: this.inCount,
-        out: this.outCount,
-        bags: this.bagsCount
+      const result = await this.counterService.submitSession({
+        name: this.staffName,
+        session: this.session,
+        location: this.selectedLocation,
+        customer_in: this.inCount,
+        customer_out: this.outCount,
+        out_with_bags: this.bagsCount
       })
-      console.log('Session data submitted successfully')
+      console.log('Session data submitted successfully:', result)
       
       // Update last sync time
       const lastSyncEl = document.getElementById('lastSync')
@@ -101,7 +104,7 @@ export class MainClicker {
       localStorage.removeItem(sessionKey)
       
       // Show confirmation
-      alert(`Session auto-submitted!\nEntries: ${this.inCount}\nExits: ${this.outCount}\nWith Bags: ${this.bagsCount}`)
+      alert(`Session auto-submitted!\nName: ${this.staffName}\nEntries: ${this.inCount}\nExits: ${this.outCount}\nWith Bags: ${this.bagsCount}`)
       
       // Reset counts and restart countdown
       this.inCount = 0
@@ -346,26 +349,21 @@ export class MainClicker {
   }
 
   private syncToBackend() {
-    // Save to localStorage immediately
+    // Just save to localStorage - actual sync happens every 15 minutes with handleAutoSubmit
     this.saveCountsToStorage()
-    
-    // Send to backend asynchronously without waiting
-    this.counterService.updateCount(this.selectedLocation, {
-      in: this.inCount,
-      out: this.outCount,
-      bags: this.bagsCount
-    }).catch(error => {
-      console.error('Failed to sync count:', error)
-    })
   }
 
   private async submitSession() {
     try {
-      await this.counterService.updateCount(this.selectedLocation, {
-        in: this.inCount,
-        out: this.outCount,
-        bags: this.bagsCount
+      const result = await this.counterService.submitSession({
+        name: this.staffName,
+        session: this.session,
+        location: this.selectedLocation,
+        customer_in: this.inCount,
+        customer_out: this.outCount,
+        out_with_bags: this.bagsCount
       })
+      
       alert(`Session submitted!\nEntries: ${this.inCount}\nExits: ${this.outCount}\nWith Bags: ${this.bagsCount}`)
       
       // Clear localStorage

@@ -1,37 +1,43 @@
 import { api } from '../api/cloudflareApi'
 
-export interface TrafficCount {
-  in: number
-  out: number
-  bags?: number
-  timestamp?: string
+export interface TrafficData {
+  name: string
+  session: string
+  location: string
+  customer_in: number
+  customer_out: number
+  out_with_bags: number
 }
 
 export class TrafficCounterService {
-  async getTodayCount(location: string): Promise<TrafficCount> {
+  async submitSession(data: TrafficData): Promise<any> {
     try {
-      const response = await api.get(`/traffic/${location}/today`)
+      const response = await api.post('/submit', data)
       return response.data
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to fetch count')
+      throw new Error(error.response?.data?.error || 'Failed to submit session')
     }
   }
 
-  async updateCount(location: string, count: TrafficCount): Promise<TrafficCount> {
+  async getSessionHistory(location: string, name: string, limit: number = 10): Promise<any[]> {
     try {
-      const response = await api.post(`/traffic/${location}/update`, count)
+      const response = await api.get('/history', {
+        params: { location, name, limit }
+      })
       return response.data
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to update count')
+      throw new Error(error.response?.data?.error || 'Failed to fetch history')
     }
   }
 
-  async getCountHistory(location: string, days: number = 7): Promise<any[]> {
+  async getSessionStats(session: string): Promise<any[]> {
     try {
-      const response = await api.get(`/traffic/${location}/history?days=${days}`)
+      const response = await api.get('/stats', {
+        params: { session }
+      })
       return response.data
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to fetch history')
+      throw new Error(error.response?.data?.error || 'Failed to fetch stats')
     }
   }
 }
