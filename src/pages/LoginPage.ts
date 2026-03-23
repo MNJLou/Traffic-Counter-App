@@ -1,13 +1,13 @@
 import { AuthService } from '../services/AuthService'
 
 const STAFF_MEMBERS = [
-  'John Smith',
-  'Sarah Johnson',
-  'Mike Wilson',
-  'Emma Davis',
-  'Chris Brown',
-  'Lisa Anderson',
-  'David Martinez'
+  'Unarine',
+  'Masego',
+  'Nicole',
+  'Driya',
+  'Kamogelo',
+  'Katlego',
+  'Jerome'
 ]
 
 // Generate session slots for next 7 days
