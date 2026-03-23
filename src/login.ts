@@ -1,6 +1,7 @@
+// login.ts  (new file in src/)
 import './styles/main.css'
 import { LoginPage } from './pages/LoginPage'
 
-const loginApp = document.getElementById('login-app')!
-const loginPage = new LoginPage(loginApp)
+const app = document.getElementById('app')!
+const loginPage = new LoginPage(app)
 loginPage.render()
