@@ -175,9 +175,9 @@ export class MainClicker {
             <div class="bg-surface-container-low rounded-xl p-4">
               <label for="locationSelect" class="block text-sm font-medium mb-2 text-on-surface">Monitoring Location:</label>
               <select id="locationSelect" class="w-full px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-                <option value="main">Main Entrance</option>
-                <option value="back">Back Entrance</option>
-                <option value="side">Side Entrance</option>
+                <option value="pnp">PnP</option>
+                <option value="checkers">Checkers</option>
+                <option value="walmart">Walmart</option>
               </select>
             </div>
 
