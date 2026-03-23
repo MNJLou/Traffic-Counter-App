@@ -5,11 +5,11 @@
  * - Traffic session data storage
  * - Every 15 minutes, API stores the data being tracked
  */
-
+ 
 export interface Env {
   DB: D1Database
 }
-
+ 
 interface TrafficData {
   name: string
   session: string
@@ -18,7 +18,7 @@ interface TrafficData {
   customer_out: number
   out_with_bags: number
 }
-
+ 
 // Submit session data
 export async function submitSessionData(data: TrafficData, env: Env) {
   try {
@@ -44,7 +44,7 @@ export async function submitSessionData(data: TrafficData, env: Env) {
     throw new Error(`Failed to insert session data: ${error.message}`)
   }
 }
-
+ 
 // Get session history
 export async function getSessionHistory(
   location: string,
@@ -65,7 +65,7 @@ export async function getSessionHistory(
     throw new Error(`Failed to fetch session history: ${error.message}`)
   }
 }
-
+ 
 // Get stats for a session
 export async function getSessionStats(session: string, env: Env) {
   try {
@@ -86,32 +86,40 @@ export async function getSessionStats(session: string, env: Env) {
     throw new Error(`Failed to fetch stats: ${error.message}`)
   }
 }
-
+ 
 // CORS headers
-function getCorsHeaders() {
+function getCorsHeaders(request?: Request) {
+  const allowedOrigins = [
+    'https://traffic-counter-app.pages.dev',
+    'http://localhost:5173'
+  ]
+ 
+  const origin = request?.headers.get('Origin') || ''
+  const allowedOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0]
+ 
   return {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json'
   }
 }
-
+ 
 // Main router
 export default {
   async fetch(request: Request, env: Env) {
     const url = new URL(request.url)
     const pathname = url.pathname
     const method = request.method
-
+ 
     // Handle CORS preflight
     if (method === 'OPTIONS') {
       return new Response(null, {
         status: 204,
-        headers: getCorsHeaders()
+        headers: getCorsHeaders(request)
       })
     }
-
+ 
     try {
       // Submit session data
       if (pathname === '/submit' && method === 'POST') {
@@ -121,17 +129,17 @@ export default {
         if (!data.name || !data.session || !data.location) {
           return new Response(JSON.stringify({ error: 'Missing required fields' }), { 
             status: 400,
-            headers: getCorsHeaders()
+            headers: getCorsHeaders(request)
           })
         }
         
         const result = await submitSessionData(data, env)
         return new Response(JSON.stringify(result), { 
           status: 201,
-          headers: getCorsHeaders()
+          headers: getCorsHeaders(request)
         })
       }
-
+ 
       // Get session history
       if (pathname === '/history' && method === 'GET') {
         const location = url.searchParams.get('location') || 'main'
@@ -140,10 +148,10 @@ export default {
         
         const history = await getSessionHistory(location, name, limit, env)
         return new Response(JSON.stringify(history), { 
-          headers: getCorsHeaders()
+          headers: getCorsHeaders(request)
         })
       }
-
+ 
       // Get session stats
       if (pathname === '/stats' && method === 'GET') {
         const session = url.searchParams.get('session')
@@ -151,32 +159,32 @@ export default {
         if (!session) {
           return new Response(JSON.stringify({ error: 'Missing session parameter' }), { 
             status: 400,
-            headers: getCorsHeaders()
+            headers: getCorsHeaders(request)
           })
         }
         
         const stats = await getSessionStats(session, env)
         return new Response(JSON.stringify(stats), { 
-          headers: getCorsHeaders()
+          headers: getCorsHeaders(request)
         })
       }
-
+ 
       // Health check
       if (pathname === '/health' && method === 'GET') {
         return new Response(JSON.stringify({ status: 'ok' }), { 
-          headers: getCorsHeaders()
+          headers: getCorsHeaders(request)
         })
       }
-
+ 
       return new Response(JSON.stringify({ error: 'Not found' }), { 
         status: 404,
-        headers: getCorsHeaders()
+        headers: getCorsHeaders(request)
       })
     } catch (error: any) {
       console.error('Error:', error)
       return new Response(JSON.stringify({ error: error.message }), { 
         status: 500,
-        headers: getCorsHeaders()
+        headers: getCorsHeaders(request)
       })
     }
   }
