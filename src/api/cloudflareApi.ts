@@ -3,6 +3,10 @@ import type { AxiosInstance } from 'axios'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.example.com'
 
+// Debug: Log the API base URL to console
+console.log('🔧 API Base URL:', API_BASE_URL)
+console.log('🔧 VITE_API_URL env:', import.meta.env.VITE_API_URL)
+
 export const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,

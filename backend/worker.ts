@@ -87,12 +87,30 @@ export async function getSessionStats(session: string, env: Env) {
   }
 }
 
+// CORS headers
+function getCorsHeaders() {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json'
+  }
+}
+
 // Main router
 export default {
   async fetch(request: Request, env: Env) {
     const url = new URL(request.url)
     const pathname = url.pathname
     const method = request.method
+
+    // Handle CORS preflight
+    if (method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: getCorsHeaders()
+      })
+    }
 
     try {
       // Submit session data
@@ -103,14 +121,14 @@ export default {
         if (!data.name || !data.session || !data.location) {
           return new Response(JSON.stringify({ error: 'Missing required fields' }), { 
             status: 400,
-            headers: { 'Content-Type': 'application/json' }
+            headers: getCorsHeaders()
           })
         }
         
         const result = await submitSessionData(data, env)
         return new Response(JSON.stringify(result), { 
           status: 201,
-          headers: { 'Content-Type': 'application/json' }
+          headers: getCorsHeaders()
         })
       }
 
@@ -122,7 +140,7 @@ export default {
         
         const history = await getSessionHistory(location, name, limit, env)
         return new Response(JSON.stringify(history), { 
-          headers: { 'Content-Type': 'application/json' }
+          headers: getCorsHeaders()
         })
       }
 
@@ -133,32 +151,32 @@ export default {
         if (!session) {
           return new Response(JSON.stringify({ error: 'Missing session parameter' }), { 
             status: 400,
-            headers: { 'Content-Type': 'application/json' }
+            headers: getCorsHeaders()
           })
         }
         
         const stats = await getSessionStats(session, env)
         return new Response(JSON.stringify(stats), { 
-          headers: { 'Content-Type': 'application/json' }
+          headers: getCorsHeaders()
         })
       }
 
       // Health check
       if (pathname === '/health' && method === 'GET') {
         return new Response(JSON.stringify({ status: 'ok' }), { 
-          headers: { 'Content-Type': 'application/json' }
+          headers: getCorsHeaders()
         })
       }
 
       return new Response(JSON.stringify({ error: 'Not found' }), { 
         status: 404,
-        headers: { 'Content-Type': 'application/json' }
+        headers: getCorsHeaders()
       })
     } catch (error: any) {
       console.error('Error:', error)
       return new Response(JSON.stringify({ error: error.message }), { 
         status: 500,
-        headers: { 'Content-Type': 'application/json' }
+        headers: getCorsHeaders()
       })
     }
   }

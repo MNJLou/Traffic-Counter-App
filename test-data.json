@@ -1,0 +1,8 @@
+{
+  "name": "John Smith",
+  "session": "2026-03-23T14:00",
+  "location": "main",
+  "customer_in": 10,
+  "customer_out": 5,
+  "out_with_bags": 4
+}
