@@ -1,18 +1,10 @@
-name = "traffic-counter-api"
+name = "traffic-counter-api-worker"
 main = "worker.ts"
 compatibility_date = "2024-01-01"
 account_id = "6b334c20eaac18dc9726fea343353d7e"
 workers_dev = true
 
 [[d1_databases]]
-binding = "DB"
-database_name = "traffic-counter"
-database_id = "0f648666-4852-46c3-921a-8df207fc5e46"
-
-[env.production]
-vars = { ENVIRONMENT = "production" }
-
-[[env.production.d1_databases]]
 binding = "DB"
 database_name = "traffic-counter"
 database_id = "0f648666-4852-46c3-921a-8df207fc5e46"
