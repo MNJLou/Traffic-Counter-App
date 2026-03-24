@@ -7,6 +7,7 @@ const STAFF_MEMBERS = [
   'Driya',
   'Kamogelo',
   'Katlego',
+  'Malcolm',
   'Jerome',
   'Other'
 ]
