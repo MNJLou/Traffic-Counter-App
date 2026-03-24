@@ -305,7 +305,7 @@ export class MainClicker {
     document.getElementById('locationSelect')!.addEventListener('change', (e) => {
       this.selectedLocation = (e.target as HTMLSelectElement).value
       this.loadCountsFromStorage()
-      this.render()
+      this.updateDisplay()
     })
 
     // Notes input
