@@ -7,24 +7,32 @@ const STAFF_MEMBERS = [
   'Driya',
   'Kamogelo',
   'Katlego',
-  'Jerome'
+  'Jerome',
+  'Other'
 ]
 
 // Generate session slots - 2 fixed sessions
 function generateSessionSlots(): { label: string; value: string }[] {
   const slots = []
   
-  // Session 1: Wednesday 25 March 4:00 pm - 6:00 pm
-  const wed25 = new Date(2026, 2, 25, 16, 0) // March 25, 2026, 4:00 PM
-  const label1 = `Wednesday 25/3, 2026, 16:00`
-  const value1 = '2026-03-25T16:00'
+  
+  // Session 1: Wednesday 25 March 12:00 pm - 2:00 pm
+  const wed25noon = new Date(2026, 2, 25, 12, 0) // March 25, 2026, 12:00 PM
+  const label1 = `Wednesday 25/3, 2026, 12:00`
+  const value1 = '2026-03-25T12:00'
   slots.push({ label: label1, value: value1 })
   
-  // Session 2: Saturday 28 March 11:00 am - 1:00 pm
-  const sat28 = new Date(2026, 2, 28, 11, 0) // March 28, 2026, 11:00 AM
-  const label2 = `Saturday 28/3, 2026, 11:00`
-  const value2 = '2026-03-28T11:00'
+  // Session 2: Wednesday 25 March 4:00 pm - 6:00 pm
+  const wed25 = new Date(2026, 2, 25, 16, 0) // March 25, 2026, 4:00 PM
+  const label2 = `Wednesday 25/3, 2026, 16:00`
+  const value2 = '2026-03-25T16:00'
   slots.push({ label: label2, value: value2 })
+  
+  // Session 3: Saturday 28 March 11:00 am - 1:00 pm
+  const sat28 = new Date(2026, 2, 28, 11, 0) // March 28, 2026, 11:00 AM
+  const label3 = `Saturday 28/3, 2026, 11:00`
+  const value3 = '2026-03-28T11:00'
+  slots.push({ label: label3, value: value3 })
   
   return slots
 }
@@ -67,6 +75,17 @@ export class LoginPage {
               </select>
             </div>
 
+            <div id="customNameDiv" class="hidden">
+              <label for="customNameInput" class="block text-sm font-medium mb-2">Your Name</label>
+              <input 
+                id="customNameInput" 
+                name="customName" 
+                type="text" 
+                class="input-field"
+                placeholder="Enter your name"
+              />
+            </div>
+
             <div>
               <label for="sessionSelect" class="block text-sm font-medium mb-2">Session</label>
               <select 
@@ -95,14 +114,38 @@ export class LoginPage {
 
     const form = document.getElementById('loginForm') as HTMLFormElement
     const errorMessage = document.getElementById('errorMessage')!
+    const staffSelect = document.getElementById('staffSelect') as HTMLSelectElement
+    const customNameDiv = document.getElementById('customNameDiv')!
+    const customNameInput = document.getElementById('customNameInput') as HTMLInputElement
+
+    // Show/hide custom name input based on staff selection
+    staffSelect.addEventListener('change', (e) => {
+      const selected = (e.target as HTMLSelectElement).value
+      if (selected === 'Other') {
+        customNameDiv.classList.remove('hidden')
+        customNameInput.focus()
+      } else {
+        customNameDiv.classList.add('hidden')
+        customNameInput.value = ''
+      }
+    })
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault()
-      const staff = (document.getElementById('staffSelect') as HTMLSelectElement).value
+      const staff = staffSelect.value
       const session = (document.getElementById('sessionSelect') as HTMLSelectElement).value
 
+      // Use custom name if "Other" is selected
+      const staffName = staff === 'Other' ? customNameInput.value.trim() : staff
+
+      if (staff === 'Other' && !staffName) {
+        errorMessage.textContent = 'Please enter your name'
+        errorMessage.classList.remove('hidden')
+        return
+      }
+
       try {
-        await this.authService.quickLogin(staff, session)
+        await this.authService.quickLogin(staffName, session)
         window.location.href = '/index.html'
       } catch (error: any) {
         errorMessage.textContent = error.message || 'Selection failed'

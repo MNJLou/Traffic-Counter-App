@@ -17,21 +17,23 @@ interface TrafficData {
   customer_in: number
   customer_out: number
   out_with_bags: number
+  notes?: string
 }
  
 // Submit session data
 export async function submitSessionData(data: TrafficData, env: Env) {
   try {
     const result = await env.DB.prepare(
-      `INSERT INTO traffic_sessions (name, session, location, customer_in, customer_out, out_with_bags)
-       VALUES (?, ?, ?, ?, ?, ?)`
+      `INSERT INTO traffic_sessions (name, session, location, customer_in, customer_out, out_with_bags, notes)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`
     ).bind(
       data.name,
       data.session,
       data.location,
       data.customer_in,
       data.customer_out,
-      data.out_with_bags
+      data.out_with_bags,
+      data.notes || null
     ).run()
     
     return {

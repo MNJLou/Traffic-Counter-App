@@ -8,6 +8,7 @@ export class MainClicker {
   private inCount: number = 0
   private outCount: number = 0
   private bagsCount: number = 0
+  private notes: string = ''
   private selectedLocation: string = 'main'
   private staffName: string = ''
   private session: string = ''
@@ -35,6 +36,7 @@ export class MainClicker {
         this.inCount = data.in || 0
         this.outCount = data.out || 0
         this.bagsCount = data.bags || 0
+        this.notes = data.notes || ''
         console.log('Loaded counts from localStorage:', data)
         return
       } catch (error) {
@@ -46,6 +48,7 @@ export class MainClicker {
     this.inCount = 0
     this.outCount = 0
     this.bagsCount = 0
+    this.notes = ''
   }
 
   private saveCountsToStorage() {
@@ -54,6 +57,7 @@ export class MainClicker {
       in: this.inCount,
       out: this.outCount,
       bags: this.bagsCount,
+      notes: this.notes,
       timestamp: Date.now()
     }))
   }
@@ -88,7 +92,8 @@ export class MainClicker {
         location: this.selectedLocation,
         customer_in: this.inCount,
         customer_out: this.outCount,
-        out_with_bags: this.bagsCount
+        out_with_bags: this.bagsCount,
+        notes: this.notes
       })
       console.log('Session data submitted successfully:', result)
       
@@ -110,6 +115,7 @@ export class MainClicker {
       this.inCount = 0
       this.outCount = 0
       this.bagsCount = 0
+      this.notes = ''
       this.updateDisplay()
       this.startSyncCountdown()
     } catch (error) {
@@ -238,6 +244,22 @@ export class MainClicker {
                 </button>
               </div>
             </div>
+
+            <!-- Notes Section -->
+            <div class="bg-surface-container-low rounded-xl p-4 flex flex-col gap-4">
+              <div class="flex justify-between items-center px-2">
+                <div class="flex flex-col">
+                  <span class="editorial-headline font-bold text-lg text-on-surface">Notes & Observations</span>
+                  <span class="font-label text-xs text-on-surface-variant">Record customer insights</span>
+                </div>
+              </div>
+              <textarea
+                id="notesInput"
+                class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-md focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                placeholder="Add your thoughts and observations about customers..."
+                rows="4"
+              >${this.notes}</textarea>
+            </div>
           </div>
 
           <!-- Submit Session Button -->
@@ -282,7 +304,14 @@ export class MainClicker {
     // Location select
     document.getElementById('locationSelect')!.addEventListener('change', (e) => {
       this.selectedLocation = (e.target as HTMLSelectElement).value
-      this.loadCounts().then(() => this.render())
+      this.loadCountsFromStorage()
+      this.render()
+    })
+
+    // Notes input
+    document.getElementById('notesInput')!.addEventListener('input', (e) => {
+      this.notes = (e.target as HTMLTextAreaElement).value
+      this.syncToBackend()
     })
 
     // Submit button
@@ -361,7 +390,8 @@ export class MainClicker {
         location: this.selectedLocation,
         customer_in: this.inCount,
         customer_out: this.outCount,
-        out_with_bags: this.bagsCount
+        out_with_bags: this.bagsCount,
+        notes: this.notes
       })
       
       alert(`Session submitted!\nEntries: ${this.inCount}\nExits: ${this.outCount}\nWith Bags: ${this.bagsCount}`)
@@ -374,7 +404,9 @@ export class MainClicker {
       this.inCount = 0
       this.outCount = 0
       this.bagsCount = 0
+      this.notes = ''
       this.updateDisplay()
+      this.render()
       this.startSyncCountdown()
     } catch (error) {
       console.error('Failed to submit session:', error)
