@@ -9,7 +9,7 @@ export class MainClicker {
   private outCount: number = 0
   private bagsCount: number = 0
   private notes: string = ''
-  private selectedLocation: string = 'main'
+  private selectedLocation: string = 'pnp'
   private staffName: string = ''
   private session: string = ''
   private syncCountdown: number = 900 // 15 minutes in seconds
