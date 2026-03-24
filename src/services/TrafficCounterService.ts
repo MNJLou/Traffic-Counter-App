@@ -12,13 +12,21 @@ export interface TrafficData {
 
 export class TrafficCounterService {
   async submitSession(data: TrafficData): Promise<any> {
-    try {
-      const response = await api.post('/submit', data)
-      return response.data
-    } catch (error: any) {
-      throw new Error(error.response?.data?.error || 'Failed to submit session')
-    }
+  try {
+    const response = await api.post('/submit', data)
+    return response.data
+  } catch (error: any) {
+    // Log everything we can
+    console.error('Full error:', error)
+    console.error('Response:', error.response)
+    console.error('Message:', error.message)
+    
+    const message = error.response?.data?.error 
+      || error.message 
+      || 'Unknown error'
+    throw new Error(`Submit failed: ${message} (status: ${error.response?.status}, url: ${error.config?.url})`)
   }
+}
 
   async getSessionHistory(location: string, name: string, limit: number = 10): Promise<any[]> {
     try {
