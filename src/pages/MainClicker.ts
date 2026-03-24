@@ -120,9 +120,9 @@ export class MainClicker {
       this.startSyncCountdown()
     } catch (error) {
       console.error('Failed to auto-submit session:', error)
-      alert('Auto-submit failed. Retrying in 1 minute...')
-      // Retry after 1 minute if failed
-      setTimeout(() => this.handleAutoSubmit(), 60000)
+      alert('Auto-submit failed. Retrying in 30 seconds...')
+      // Retry after 30 seconds if failed
+      setTimeout(() => this.handleAutoSubmit(), 30000)
     }
   }
 
@@ -209,7 +209,7 @@ export class MainClicker {
             <!-- People Leaving -->
             <div class="bg-surface-container-low rounded-xl p-4 flex flex-col gap-4">
               <div class="flex justify-between items-center px-2">
-                <span class="editorial-headline font-bold text-lg text-on-surface">People Leaving</span>
+                <span class="editorial-headline font-bold text-lg text-on-surface">People Leaving Without Bags</span>
               </div>
               <div class="grid grid-cols-3 items-center gap-4">
                 <button id="outUndoBtn" class="bg-surface-container-highest text-on-surface-variant h-16 rounded-xl flex items-center justify-center active:scale-95 transition-all hover:bg-surface-container">
@@ -408,10 +408,10 @@ export class MainClicker {
       this.updateDisplay()
       this.render()
       this.startSyncCountdown()
-    } catch (error) {
-      console.error('Failed to submit session:', error)
-      alert('Failed to submit session')
-    }
+    } catch (error: any) {
+    console.error('Failed to submit session:', error)
+    alert(`Failed to submit session: ${error.message}`)
+  }
   }
 
   destroy() {
