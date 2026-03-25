@@ -7,7 +7,9 @@ export interface TrafficData {
   customer_in: number
   customer_out: number
   out_with_bags: number
+  online_purchases: number
   notes?: string
+  timestamp?: string
 }
 
 export class TrafficCounterService {

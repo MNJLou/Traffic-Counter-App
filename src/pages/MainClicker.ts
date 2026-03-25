@@ -8,6 +8,7 @@ export class MainClicker {
   private inCount: number = 0
   private outCount: number = 0
   private bagsCount: number = 0
+  private onlineCount: number = 0
   private notes: string = ''
   private selectedLocation: string = 'pnp'
   private staffName: string = ''
@@ -36,6 +37,7 @@ export class MainClicker {
         this.inCount = data.in || 0
         this.outCount = data.out || 0
         this.bagsCount = data.bags || 0
+        this.onlineCount = data.online || 0
         this.notes = data.notes || ''
         console.log('Loaded counts from localStorage:', data)
         return
@@ -48,6 +50,7 @@ export class MainClicker {
     this.inCount = 0
     this.outCount = 0
     this.bagsCount = 0
+    this.onlineCount = 0
     this.notes = ''
   }
 
@@ -57,6 +60,7 @@ export class MainClicker {
       in: this.inCount,
       out: this.outCount,
       bags: this.bagsCount,
+      online: this.onlineCount,
       notes: this.notes,
       timestamp: Date.now()
     }))
@@ -93,6 +97,7 @@ export class MainClicker {
         customer_in: this.inCount,
         customer_out: this.outCount,
         out_with_bags: this.bagsCount,
+        online_purchases: this.onlineCount,
         notes: this.notes
       })
       console.log('Session data submitted successfully:', result)
@@ -115,6 +120,7 @@ export class MainClicker {
       this.inCount = 0
       this.outCount = 0
       this.bagsCount = 0
+      this.onlineCount = 0
       this.notes = ''
       this.updateDisplay()
       this.startSyncCountdown()
@@ -245,6 +251,27 @@ export class MainClicker {
               </div>
             </div>
 
+            <!-- Online Purchases -->
+            <div class="bg-surface-container-low rounded-xl p-4 flex flex-col gap-4">
+              <div class="flex justify-between items-center px-2">
+                <div class="flex flex-col">
+                  <span class="editorial-headline font-bold text-lg text-on-surface">Online Purchases</span>
+                  <span class="font-label text-xs text-on-surface-variant">Customer orders</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-3 items-center gap-4">
+                <button id="onlineUndoBtn" class="bg-surface-container-highest text-on-surface-variant h-16 rounded-xl flex items-center justify-center active:scale-95 transition-all hover:bg-surface-container">
+                  <span class="material-symbols-outlined text-3xl">remove</span>
+                </button>
+                <div class="text-center">
+                  <span class="editorial-headline text-5xl font-bold text-primary tabular-nums" id="onlineCount">${this.onlineCount}</span>
+                </div>
+                <button id="onlineBtn" class="bg-primary text-on-primary h-16 rounded-xl flex items-center justify-center active:scale-95 transition-all shadow-lg shadow-primary/20 hover:opacity-90">
+                  <span class="material-symbols-outlined text-3xl">add</span>
+                </button>
+              </div>
+            </div>
+
             <!-- Notes Section -->
             <div class="bg-surface-container-low rounded-xl p-4 flex flex-col gap-4">
               <div class="flex justify-between items-center px-2">
@@ -297,9 +324,11 @@ export class MainClicker {
     document.getElementById('inBtn')!.addEventListener('click', () => this.incrementIn())
     document.getElementById('outBtn')!.addEventListener('click', () => this.incrementOut())
     document.getElementById('bagsBtn')!.addEventListener('click', () => this.incrementBags())
+    document.getElementById('onlineBtn')!.addEventListener('click', () => this.incrementOnline())
     document.getElementById('inUndoBtn')!.addEventListener('click', () => this.decrementIn())
     document.getElementById('outUndoBtn')!.addEventListener('click', () => this.decrementOut())
     document.getElementById('bagsUndoBtn')!.addEventListener('click', () => this.decrementBags())
+    document.getElementById('onlineUndoBtn')!.addEventListener('click', () => this.decrementOnline())
 
     // Location select
     document.getElementById('locationSelect')!.addEventListener('change', (e) => {
@@ -366,15 +395,31 @@ export class MainClicker {
     }
   }
 
+  private async incrementOnline() {
+    this.onlineCount++
+    this.updateDisplay()
+    this.syncToBackend()
+  }
+
+  private async decrementOnline() {
+    if (this.onlineCount > 0) {
+      this.onlineCount--
+      this.updateDisplay()
+      this.syncToBackend()
+    }
+  }
+
   private updateDisplay() {
     // Update just the numbers on the page without full re-render
     const inCountEl = document.getElementById('inCount')
     const outCountEl = document.getElementById('outCount')
     const bagsCountEl = document.getElementById('bagsCount')
+    const onlineCountEl = document.getElementById('onlineCount')
     
     if (inCountEl) inCountEl.textContent = String(this.inCount)
     if (outCountEl) outCountEl.textContent = String(this.outCount)
     if (bagsCountEl) bagsCountEl.textContent = String(this.bagsCount)
+    if (onlineCountEl) onlineCountEl.textContent = String(this.onlineCount)
   }
 
   private syncToBackend() {
@@ -391,7 +436,9 @@ export class MainClicker {
         customer_in: this.inCount,
         customer_out: this.outCount,
         out_with_bags: this.bagsCount,
-        notes: this.notes
+        online_purchases: this.onlineCount,
+        notes: this.notes,
+        timestamp: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString() // ← UTC+2 SAST
       })
       
       alert(`Session submitted!\nEntries: ${this.inCount}\nExits: ${this.outCount}\nWith Bags: ${this.bagsCount}`)
@@ -404,6 +451,7 @@ export class MainClicker {
       this.inCount = 0
       this.outCount = 0
       this.bagsCount = 0
+      this.onlineCount = 0
       this.notes = ''
       this.updateDisplay()
       this.render()

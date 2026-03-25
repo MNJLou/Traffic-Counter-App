@@ -17,24 +17,28 @@ interface TrafficData {
   customer_in: number
   customer_out: number
   out_with_bags: number
+  online_purchases?: number
   notes?: string
+  timestamp?: string
 }
  
 // Submit session data
 export async function submitSessionData(data: TrafficData, env: Env) {
   try {
     const result = await env.DB.prepare(
-      `INSERT INTO traffic_sessions (name, session, location, customer_in, customer_out, out_with_bags, notes)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`
-    ).bind(
-      data.name,
-      data.session,
-      data.location,
-      data.customer_in,
-      data.customer_out,
-      data.out_with_bags,
-      data.notes || null
-    ).run()
+  `INSERT INTO traffic_sessions (name, session, location, customer_in, customer_out, out_with_bags, online_purchases, notes, timestamp)
+   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+).bind(
+  data.name,
+  data.session,
+  data.location,
+  data.customer_in,
+  data.customer_out,
+  data.out_with_bags,
+  data.online_purchases || 0,
+  data.notes || null,
+  data.timestamp || new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString() // fallback to SAST
+).run()
     
     return {
       success: true,

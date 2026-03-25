@@ -13,6 +13,7 @@ CREATE TABLE traffic_sessions (
   customer_in INTEGER DEFAULT 0,
   customer_out INTEGER DEFAULT 0,
   out_with_bags INTEGER DEFAULT 0,
+  online_purchases INTEGER DEFAULT 0,
   notes TEXT,
   timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
 );
