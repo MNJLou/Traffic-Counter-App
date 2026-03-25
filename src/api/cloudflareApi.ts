@@ -1,7 +1,7 @@
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.example.com'
+const API_BASE_URL = '/api'
 
 // Debug: Log the API base URL to console
 console.log('🔧 API Base URL:', API_BASE_URL)
