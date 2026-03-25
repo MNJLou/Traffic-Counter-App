@@ -8,3 +8,9 @@ dist
 *.vue.js
 *.vue.ts
 .vite
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
